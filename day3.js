@@ -57,7 +57,6 @@ input.forEach((path, idx) => {
 	})
 })
 
-delete locations['0:0']
 _
 	.chain(locations)
 	.omit(['0:0'])
@@ -65,5 +64,6 @@ _
 	.sort(({dis:a }, {dis:b}) =>
 		a-b
 	)
-	.thru(console.log)
+	.first()
+	.tap(console.log)
 	.value()
