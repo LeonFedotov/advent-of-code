@@ -4,7 +4,7 @@ _
 	.chain('357253-892942')
 	.split('-')
 	.map(Number)
-	.thru((args) => _.range(...args))
+	.reduce(_.range)
 	.map((i) => i.toString().split('').map(Number))
 	.filter(i => 
 		i.indexOf(0) == -1 &&
