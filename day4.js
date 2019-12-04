@@ -1,20 +1,17 @@
 const _ = require('lodash')
-const [start, end] = '357253-892942'.split('-').map((r) => parseInt(r, 10))
-const list = []
-for(let i = start;i<=end;i++) {
-	list.push(`${i}`.split(''))
-}
 
 _
-	.chain(list)
-	.filter(i => i.indexOf('0') == -1)
-	.filter(i =>
-		_.every(i, (c, i, a) =>
-			(i == 0) ||
-			(parseInt(a[i-1], 10) <= parseInt(c, 10))
-		)
+	.chain('357253-892942')
+	.split('-')
+	.map(Number)
+	.reduce(_.range)
+	.map((i) => i.toString().split('').map(Number))
+	.filter(i => 
+		i.indexOf(0) == -1 &&
+		_(i).every((c, i, a) => i == 0 || a[i-1] <= c) &&
+		_(i).some((c, i, a) => i != 0 && c == a[i-1])
 	)
-	.filter((i) => _.some(i, (c, i, a) => i != 0 && c == a[i-1]))
 	.size()
 	.tap(console.log)
 	.value()
+	
