@@ -21,44 +21,44 @@ let p = 0
 const insp = (ins) => (''+ins).split('').reverse().map(Number)
 
 while(p < mem.length) {
-	const [op, h, ...modes] = insp(mem[p++])
+	const [op, h, ...[xm, ym]] = insp(mem[p++])
 	if(op == FINISHED && h == FINISHED) {
 		break;
 	} else if(op == INPUT) {
 		mem[mem[p++]] = userInput.shift()
 	} else if(op == OUTPUT) {
-		console.log('output', modes[0]?mem[p++]:mem[mem[p++]])
+		console.log('output', xm?mem[p++]:mem[mem[p++]])
 	} else if(op == ADD) {
-		let x = modes[0]?mem[p++]:mem[mem[p++]]
-		let y = modes[1]?mem[p++]:mem[mem[p++]]
-		let t = mem[p++]
+		const x = xm?mem[p++]:mem[mem[p++]]
+		const y = ym?mem[p++]:mem[mem[p++]]
+		const t = mem[p++]
 		mem[t] = x+y
 	} else if(op == MULTIPLY) {
-		let x = modes[0]?mem[p++]:mem[mem[p++]]
-		let y = modes[1]?mem[p++]:mem[mem[p++]]
-		let t = mem[p++]
+		const x = xm?mem[p++]:mem[mem[p++]]
+		const y = ym?mem[p++]:mem[mem[p++]]
+		const t = mem[p++]
 		mem[t] = x*y
 	} else if(op == JMPT) {
-		let x = modes[0]?mem[p++]:mem[mem[p++]]
-		let y = modes[1]?mem[p++]:mem[mem[p++]]
+		const x = xm?mem[p++]:mem[mem[p++]]
+		const y = ym?mem[p++]:mem[mem[p++]]
 		if(x != 0) {
 			p = y
 		}
 	} else if(op == JMPF) {
-		let x = modes[0]?mem[p++]:mem[mem[p++]]
-		let y = modes[1]?mem[p++]:mem[mem[p++]]
+		const x = xm?mem[p++]:mem[mem[p++]]
+		const y = ym?mem[p++]:mem[mem[p++]]
 		if(x == 0) {
 			p = y
 		}
 	} else if(op == LT) {
-		let x = modes[0]?mem[p++]:mem[mem[p++]]
-		let y = modes[1]?mem[p++]:mem[mem[p++]]
-		let t = mem[p++]
+		const x = xm?mem[p++]:mem[mem[p++]]
+		const y = ym?mem[p++]:mem[mem[p++]]
+		const t = mem[p++]
 		mem[t] = x<y
 	} else if(op == EQ) {
-		let x = modes[0]?mem[p++]:mem[mem[p++]]
-		let y = modes[1]?mem[p++]:mem[mem[p++]]
-		let t = mem[p++]
+		const x = xm?mem[p++]:mem[mem[p++]]
+		const y = ym?mem[p++]:mem[mem[p++]]
+		const t = mem[p++]
 		mem[t] = x==y
 	}
 }
