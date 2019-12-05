@@ -11,69 +11,54 @@ const ADD = 1
 const MULTIPLY = 2
 const INPUT = 3
 const OUTPUT = 4
+const JMPT = 5
+const JMPF = 6
+const LT = 7
+const EQ = 8
 const FINISHED = 9
 
 let p = 0
-const insp = (ins) => (''+ins).split('').reverse()
+const insp = (ins) => (''+ins).split('').reverse().map(Number)
 
 while(p < mem.length) {
-	const [op,h, ...modes] = insp(mem[p])
-	p+=1
+	const [op, h, ...modes] = insp(mem[p++])
 	if(op == FINISHED && h == FINISHED) {
 		break;
 	} else if(op == INPUT) {
-		mem[mem[p]] = userInput.shift()
-		p+=1
+		mem[mem[p++]] = userInput.shift()
 	} else if(op == OUTPUT) {
-		console.log('output', modes[0] == '1' ? mem[p] : mem[mem[p]])
-		p+=1
+		console.log('output', modes[0]?mem[p++]:mem[mem[p++]])
 	} else if(op == ADD) {
-		let x = mem[p]
-		p+=1
-		let y = mem[p]
-		p+=1
-		let t = mem[p]
-		p+=1
-		mem[t] = (modes[0] == '1' ? x : mem[x]) + (modes[1] == '1' ? y : mem[y])
+		let x = modes[0]?mem[p++]:mem[mem[p++]]
+		let y = modes[1]?mem[p++]:mem[mem[p++]]
+		let t = mem[p++]
+		mem[t] = x+y
 	} else if(op == MULTIPLY) {
-		let x = mem[p]
-		p+=1
-		let y = mem[p]
-		p+=1
-		let t = mem[p]
-		p+=1
-		mem[t] = (modes[0] == '1' ? x : mem[x]) * (modes[1] == '1' ? y : mem[y])
-	} else if(op == 5) {
-		let x = mem[p]
-		p+=1
-		let y = mem[p]
-		p+=1
-		if((modes[0]=='1'?x:mem[x]) != 0) {
-			p = (modes[1]=='1'?y:mem[y])
+		let x = modes[0]?mem[p++]:mem[mem[p++]]
+		let y = modes[1]?mem[p++]:mem[mem[p++]]
+		let t = mem[p++]
+		mem[t] = x*y
+	} else if(op == JMPT) {
+		let x = modes[0]?mem[p++]:mem[mem[p++]]
+		let y = modes[1]?mem[p++]:mem[mem[p++]]
+		if(x != 0) {
+			p = y
 		}
-	} else if(op == 6) {
-		let x = mem[p]
-		p+=1
-		let y = mem[p]
-		p+=1
-		if((modes[0]=='1'?x:mem[x]) == 0) {
-			p = (modes[1]=='1'?y:mem[y])
+	} else if(op == JMPF) {
+		let x = modes[0]?mem[p++]:mem[mem[p++]]
+		let y = modes[1]?mem[p++]:mem[mem[p++]]
+		if(x == 0) {
+			p = y
 		}
-	} else if(op == 7) {
-		let x = mem[p]
-		p+=1
-		let y = mem[p]
-		p+=1
-		let t = mem[p]
-		p+=1
-		mem[t] = (modes[0]=='1'?x:mem[x])<(modes[1]=='1'?y:mem[y])
-	} else if(op == 8) {
-		let x = mem[p]
-		p+=1
-		let y = mem[p]
-		p+=1
-		let t = mem[p]
-		p+=1
-		mem[t] = (modes[0]=='1'?x:mem[x])==(modes[1]=='1'?y:mem[y])
+	} else if(op == LT) {
+		let x = modes[0]?mem[p++]:mem[mem[p++]]
+		let y = modes[1]?mem[p++]:mem[mem[p++]]
+		let t = mem[p++]
+		mem[t] = x<y
+	} else if(op == EQ) {
+		let x = modes[0]?mem[p++]:mem[mem[p++]]
+		let y = modes[1]?mem[p++]:mem[mem[p++]]
+		let t = mem[p++]
+		mem[t] = x==y
 	}
 }
