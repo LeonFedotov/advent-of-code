@@ -29,11 +29,14 @@ const exec = (input, noun, verb) => {
 	return mem[0]
 }
 
-_.chain(_.range(100))
+_
+	.chain(100)
+	.range()
 	.map(x => _.range(100).map(y => [x, y, exec(mem, x, y)]))
 	.flatten()
-	.find(([n,v,x]) => x == 19690720)
-	//.thru(table)
-	.thru(([n,v])=>console.log(100*n+v))
+	.find(([,,x]) => x == 19690720)
+	.slice(0, 2)
+	.reduce((n, v) => 100*n+v)
+	.tap(console.log)
 	.value()
 

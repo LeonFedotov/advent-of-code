@@ -19,4 +19,4 @@ for(let pointer = 0; pointer < mem.length; pointer+=4) {
 	}
 }
 
-console.log(mem[0])
+console.log(mem.shift())
