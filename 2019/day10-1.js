@@ -38,7 +38,9 @@ _
 			cols.concat(col == '#' ? [[y, x]] : [])), [])
 		)
 	), [])
-	.map(([y0, x0], i, arr) => [y0, x0, arr
+	.map(([y0, x0], i, arr) => [
+		y0, x0,
+		arr
 			.slice(0, i)
 			.concat(arr.slice(i+1))
 			.map(([y1, x1]) => [
@@ -54,7 +56,9 @@ _
 	.sortBy(([angle]) => Number(angle))
 	.partition(([angle]) => angle >= Math.atan2(-1, 0))
 	.flatten()
-	.nth(199)
-	.thru(([,[[y, x]]]) => x*100+y)
+	.get('199.1')
+	.sortBy(([d]) => d)
+	.last()
+	.thru(([y, x]) => x*100+y)
 	.tap(console.log)
 	.value()

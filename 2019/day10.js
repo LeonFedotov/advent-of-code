@@ -38,7 +38,9 @@ _
 			cols.concat(col == '#' ? [[y, x]] : [])), [])
 		)
 	), [])
-	.map(([y0, x0], i, arr) => [y0, x0, arr
+	.map(([y0, x0], i, arr) => [
+		y0, x0,
+		arr
 			.slice(0, i)
 			.concat(arr.slice(i+1))
 			.map(([y1, x1]) => [
