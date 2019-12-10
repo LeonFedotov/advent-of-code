@@ -32,7 +32,7 @@ _
 	`)
 	.trim()
 	.split('\n')
-	.map(l => l.trim().split(''))
+	.map(l => [...l.trim()])
 	.reduce(((rows, row, y) => rows.concat(
 		row.reduce(((cols, col, x) =>
 			cols.concat(col == '#' ? [[y, x]] : [])), [])
