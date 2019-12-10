@@ -1,4 +1,5 @@
 const _ = require('lodash')
+
 _
 	.chain(`
 		.###..#######..####..##...#
@@ -37,9 +38,7 @@ _
 			cols.concat(col == '#' ? [[y, x]] : [])), [])
 		)
 	), [])
-	.map(([y0, x0], i, arr) => [
-		y0, x0,
-		arr
+	.map(([y0, x0], i, arr) => [y0, x0, arr
 			.slice(0, i)
 			.concat(arr.slice(i+1))
 			.map(([y1, x1]) => [
@@ -48,25 +47,14 @@ _
 				Math.sqrt(Math.pow((x0-x1), 2) + Math.pow((y0-y1), 2))
 			])
 	])
-	.map(([y, x, a]) => [y, x].concat(
-		_
-			.chain(a)
-			.groupBy(([,, angle]) => angle)
-			.thru((o) => [_.keys(o).length, o])
-			.value()
-	))
-	.sort(([,,a], [,,b]) => b - a)
-	.first()
-	.get(3)
-	.map((v, k) => [k, v.sort(([,,,a], [,,,b]) => a-b)])
-	.sort(([a], [b]) => a-b)
-	.thru(list => _
-		.chain(list)
-		.findIndex(([a]) => a == Math.atan2(0-1, 0))
-		.thru(up => list.slice(up).concat(list.slice(0, up)))
-		.value()
-	)
-	.get(199)
+	.map(([y, x, a]) => [y, x, _.groupBy(a, ([,,angle]) => angle)])
+	.maxBy(([,,angles]) => _.keys(angles).length)
+	.get(2)
+	.toPairs()
+	.sortBy(([angle]) => Number(angle))
+	.partition(([angle]) => angle >= Math.atan2(-1, 0))
+	.flatten()
+	.nth(199)
 	.thru(([,[[y, x]]]) => x*100+y)
 	.tap(console.log)
 	.value()
