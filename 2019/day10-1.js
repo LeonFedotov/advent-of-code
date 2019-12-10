@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const input = `
+const map = `
 	.###..#######..####..##...#
 	########.#.###...###.#....#
 	###..#...#######...#..####.
@@ -32,55 +32,39 @@ const input = `
 	.split('\n')
 	.map(l => l.trim().split(''))
 
-const res = _
-	.chain(input)
-	.map((row, y, rows) => row.map((col, x, cols) =>
-		col == '#' ? [y, x] : -1
-	))
-	.flatten()
-	.filter(r => r != -1)
+_
+	.chain(map)
+	.reduce(((rows, row, y) => rows.concat(row.reduce(((cols, col, x) => cols.concat(col == '#' ? [[y, x]] : [])), []))), [])
 	.map(([y0, x0], i, arr) => [
 		y0, x0,
-		_
-			.chain([...arr.slice(0, i), ...arr.slice(i+1)])
+		arr
+			.slice(0, i)
+			.concat(arr.slice(i+1))
 			.map(([y1, x1]) => [
 				y1, x1,
 				Math.atan2(y1 - y0, x1 - x0),
 				Math.sqrt(Math.pow((x0-x1), 2) + Math.pow((y0-y1), 2))
 			])
-			.value()
 	])
-	.value()
-
-_
-	.chain(res)
-	.map(([y, x, angles]) => [y, x, _.uniqBy(angles, ([,,angle]) => angle)])
-	.map(a => [a[2].length, ...a])
-	.sort(([a], [b]) => b-a)
+	.map(([y, x, a]) => [y, x].concat(
+		_
+			.chain(a)
+			.groupBy(([,, angle]) => angle)
+			.thru((o) => [_.keys(o).length, o])
+			.value()
+	))
+	.sort(([,,a], [,,b]) => b - a)
 	.first()
-	.thru(([, y, x]) => _
-		.chain(res)
-		.groupBy(([y, x]) => `${y}${x}`)
-		.get(`${y}${x}.0.2`)
+	.get(3)
+	.map((v, k) => [k, v.sort(([,,,a], [,,,b]) => a-b)])
+	.sort(([a], [b]) => a-b)
+	.thru(list => _
+		.chain(list)
+		.findIndex(([a]) => a == Math.atan2(0-1, 0))
+		.thru(up => list.slice(up).concat(list.slice(0, up)))
 		.value()
 	)
-	.sort(([,,a, aa], [,,b, bb]) => a-b)
-	.thru(list => {
-		const p = list.map(([,,a]) => a).indexOf(-1.5707963267948966)
-		const nlist = list.slice(p).concat(list.slice(0, p))
-
-		const map = _
-			.chain(nlist)
-			.groupBy(([,,a]) => `${a}`)
-			.mapValues((l) => l.sort(([,,,a], [,,,b]) => a-b))
-			.value()
-
-	 	return _
-	 		.chain(nlist)
-	 		.uniqBy(([,,a]) => a)
-	 		.value()
-	})
 	.get(199)
-	.thru(([y, x]) => x*100+y)
+	.thru(([,[[y, x]]]) => x*100+y)
 	.tap(console.log)
 	.value()

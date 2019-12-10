@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const input = `
+const map = `
 	.###..#######..####..##...#
 	########.#.###...###.#....#
 	###..#...#######...#..####.
@@ -32,28 +32,29 @@ const input = `
 	.split('\n')
 	.map(l => l.trim().split(''))
 
-const res = _
-	.chain(input)
-	.map((row, y, rows) => row.map((col, x, cols) =>
-		col == '#' ? [y, x] : -1
-	))
-	.flatten()
-	.filter(r => r != -1)
+_
+	.chain(map)
+	.reduce(((rows, row, y) => rows.concat(row.reduce(((cols, col, x) => cols.concat(col == '#' ? [[y, x]] : [])), []))), [])
 	.map(([y0, x0], i, arr) => [
 		y0, x0,
-		_
-			.chain([...arr.slice(0, i), ...arr.slice(i+1)])
+		arr
+			.slice(0, i)
+			.concat(arr.slice(i+1))
 			.map(([y1, x1]) => [
 				y1, x1,
-				Math.atan2(y1 - y0, x1 - x0)
+				Math.atan2(y1 - y0, x1 - x0),
+				Math.sqrt(Math.pow((x0-x1), 2) + Math.pow((y0-y1), 2))
 			])
-			.uniqBy(([,,angle]) => angle)
-			.value()
 	])
-	.map(a => [a[2].length, ...a])
-	.sort(([a], [b]) => b-a)
-	.take(1)
-	.tap(console.table)
+	.map(([y, x, a]) => [y, x].concat(
+		_
+			.chain(a)
+			.groupBy(([,, angle]) => angle)
+			.thru((o) => [_.keys(o).length, o])
+			.value()
+	))
+	.sort(([,,a], [,,b]) => b - a)
+	.first()
+	.get(2)
+	.tap(console.log)
 	.value()
-
-
