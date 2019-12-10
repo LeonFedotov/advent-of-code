@@ -32,7 +32,11 @@ _
 	.trim()
 	.split('\n')
 	.map(l => l.trim().split(''))
-	.reduce(((rows, row, y) => rows.concat(row.reduce(((cols, col, x) => cols.concat(col == '#' ? [[y, x]] : [])), []))), [])
+	.reduce(((rows, row, y) => rows.concat(
+		row.reduce(((cols, col, x) =>
+			cols.concat(col == '#' ? [[y, x]] : [])), [])
+		)
+	), [])
 	.map(([y0, x0], i, arr) => [
 		y0, x0,
 		arr
