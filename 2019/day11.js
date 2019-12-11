@@ -73,51 +73,61 @@ const exec = (outermem, [p = 0, relp = 0], input = []) => {
 	}
 	return false
 }
-const outermem = _
+
+
+const robot = (mem, input = 1) => {
+	const map = {'0:0': input}
+	let pos = [0, 0]
+	let dir = 0
+	let p = 0
+	let relp = 0
+	let output
+
+	let uinput = input
+	let res
+	while(res = exec(mem, [p, relp], [uinput])) {
+		[mem, [p, relp], output] = res
+		_.set(map, pos.join(':'), [...pos, output])
+		res = exec(mem, [p, relp], [])
+		if(res) {
+			[mem, [p, relp], output] = res
+			dir = dir == 0 && output == 0 ? 3 : (dir+(output == 0 ? -1 : 1))%4
+			switch(dir) {
+				case 0:
+					pos = [pos[0], pos[1]+1]
+				break
+				case 1:
+					pos = [pos[0]+1, pos[1]]
+				break
+				case 2:
+					pos = [pos[0], pos[1]-1]
+				break
+				case 3:
+					pos = [pos[0]-1, pos[1]]
+				break
+			}
+			[,, uinput] = _.get(map, pos.join(':'), [,,0])
+		} else {
+			break
+		}
+	}
+
+	return map
+}
+
+const mem = _
 	.chain(input)
 	.split(',')
 	.map(Number)
 	.value()
-const map = {'0:0': 1}
-let pos = [0, 0]
-let dir = 0
-let p = 0
-let relp = 0
-let output
-let mem = outermem
-let uinput = 1
-let res
-while(res = exec(mem, [p, relp], [uinput])) {
-	[mem, [p, relp], output] = res
-	_.set(map, pos.join(':'), [...pos, output])
-	res = exec(mem, [p, relp], [])
-	if(res) {
-		[mem, [p, relp], output] = res
-		dir = dir == 0 && output == 0 ? 3 : (dir+(output == 0 ? -1 : 1))%4
-		switch(dir) {
-			case 0:
-				pos = [pos[0], pos[1]+1]
-			break
-			case 1:
-				pos = [pos[0]+1, pos[1]]
-			break
-			case 2:
-				pos = [pos[0], pos[1]-1]
-			break
-			case 3:
-				pos = [pos[0]-1, pos[1]]
-			break
-		}
-		[,, uinput] = _.get(map, pos.join(':'), [,,0])
-	} else {
-		break
-	}
-}
+
 _
-	.chain(map)
+	.chain(robot(mem, [1]))
 	.values()
 	.sortBy(([,x]) => x)
 	.groupBy(([y])=>y)
-	.mapValues(v => v.map(([,,c]) => c == 1 ? '#' : c))
+	.mapValues(v => v.map(([,,c]) => c == 1 ? '██' : '  '))
+	.map(v => v.join(''))
+	.join('\n')
 	.tap(console.table)
 	.value()
