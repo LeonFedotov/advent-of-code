@@ -14,8 +14,10 @@ const EQ = 8
 const REL = 9
 const FINISHED = 99
 
-const exec = (outermem, [p = 0, relp = 0], input = []) => {
-	const mem = outermem.slice()
+const exec = function * (mem) {
+
+	let p = 0
+	let relp = 0
 	const res = []
 
 	const valueWithMode = (m, p) =>
@@ -27,16 +29,16 @@ const exec = (outermem, [p = 0, relp = 0], input = []) => {
 	while(p < mem.length) {
 		const [g, h, ...[xm=0, ym=0, tm=0]] = insp(mem[p++])
 		const op = Number(`${h || 0}${g}`)
-		// console.log({op, m:{xm, ym, tm}, relp, p, mem: [mem[p-1], mem[p]]})
+		//console.log({op, m:{xm, ym, tm}, relp, p, mem: [mem[p-1], mem[p]]})
 		if(op == FINISHED) {
-			console.log('finished')
+			yield res.splice(0, res.length)
 			break;
 		} else if(op == REL) {
 			relp += valueWithMode(xm, p++)
 		} else if(op == INPUT) {
-			mem[xm == 2 ? relp+mem[p++] : mem[p++]] = input.shift()
+			mem[xm == 2 ? relp+mem[p++] : mem[p++]] = yield res.splice(0, res.length)
 		} else if(op == OUTPUT) {
-			return [mem, [p+1, relp], valueWithMode(xm, p++)]
+			res.push(valueWithMode(xm, p++))
 		} else if(op == ADD) {
 			const x = valueWithMode(xm, p++)
 			const y = valueWithMode(ym, p++)
@@ -71,60 +73,48 @@ const exec = (outermem, [p = 0, relp = 0], input = []) => {
 			mem[t] = x==y
 		}
 	}
-	return false
 }
-
 
 const robot = (mem, input = 1) => {
 	const map = {'5:5': input}
 	let pos = [5, 5]
 	let dir = 0
-	let p = 0
-	let relp = 0
-	let output
+	const iter = exec(mem)
 
-	let uinput = input
-	let res
-	while(res = exec(mem, [p, relp], [uinput])) {
-		[mem, [p, relp], output] = res
-		_.set(map, pos.join(':'), [...pos, output])
-		res = exec(mem, [p, relp], [])
-		if(res) {
-			[mem, [p, relp], output] = res
-			dir = dir == 0 && output == 0 ? 3 : (dir+(output == 0 ? -1 : 1))%4
-			switch(dir) {
-				case 0:
-					pos = [pos[0], pos[1]+1]
-				break
-				case 1:
-					pos = [pos[0]+1, pos[1]]
-				break
-				case 2:
-					pos = [pos[0], pos[1]-1]
-				break
-				case 3:
-					pos = [pos[0]-1, pos[1]]
-				break
-			}
-			[,, uinput] = _.get(map, pos.join(':'), [,,0])
-		} else {
+	iter.next()
+
+	let output = iter.next(input)
+	while(!output.done) {
+		let [color, turn] = output.value
+		map[pos.join(':')] = [...pos, color]
+		dir = dir == 0 && turn == 0 ? 3 : (dir+(turn == 0 ? -1 : 1))%4
+		switch(dir) {
+			case 0:
+				pos = [pos[0], pos[1]+1]
+			break
+			case 1:
+				pos = [pos[0]+1, pos[1]]
+			break
+			case 2:
+				pos = [pos[0], pos[1]-1]
+			break
+			case 3:
+				pos = [pos[0]-1, pos[1]]
 			break
 		}
+		map[pos.join(':')] = map[pos.join(':')] || [...pos, 0]
+		output = iter.next(map[pos.join(':')][2])
 	}
-
 	return map
 }
 
-const mem = _
+_
 	.chain(input)
 	.split(',')
 	.map(Number)
-	.value()
-
-_
-	.chain(robot(mem, [1]))
+	.thru(_.curryRight(robot, 2)(1))
 	.values()
-	.sortBy(([,y]) => y)
+	.sortBy(([,x]) => x)
 	.groupBy(([y]) => y)
 	.mapValues(v => v.map(([,,c]) => c == 1 ? '██' : '  '))
 	.map(v => v.join(''))
