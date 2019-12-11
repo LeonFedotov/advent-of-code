@@ -76,8 +76,8 @@ const exec = (outermem, [p = 0, relp = 0], input = []) => {
 
 
 const robot = (mem, input = 1) => {
-	const map = {'0:0': input}
-	let pos = [0, 0]
+	const map = {'5:5': input}
+	let pos = [5, 5]
 	let dir = 0
 	let p = 0
 	let relp = 0
@@ -124,8 +124,8 @@ const mem = _
 _
 	.chain(robot(mem, [1]))
 	.values()
-	.sortBy(([,x]) => x)
-	.groupBy(([y])=>y)
+	.sortBy(([,y]) => y)
+	.groupBy(([y]) => y)
 	.mapValues(v => v.map(([,,c]) => c == 1 ? '██' : '  '))
 	.map(v => v.join(''))
 	.join('\n')
