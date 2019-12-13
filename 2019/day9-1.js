@@ -4,8 +4,6 @@ const { exec } = require('./day9')
 
 _
 	.chain(input)
-	.split(',')
-	.map(Number)
 	.thru(exec)
 	.thru((i) => (i.next(), i.next(2)).value)
 	.first()

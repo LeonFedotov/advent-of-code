@@ -14,8 +14,8 @@ const EQ = 8
 const REL = 9
 const FINISHED = 99
 
-const exec = function * (mem) {
-
+const exec = function * (input) {
+	const mem = input.split(',').map(Number)
 	let p = 0
 	let relp = 0
 	const res = []
@@ -78,8 +78,6 @@ const exec = function * (mem) {
 if (!module.parent) {
 	_
 		.chain(input)
-		.split(',')
-		.map(Number)
 		.thru(exec)
 		.thru((i) => (i.next(), i.next(1).value))
 		.first()

@@ -5,8 +5,6 @@ const { exec } = require('./day9')
 
 _
 	.chain(input)
-	.split(',')
-	.map(Number)
 	.thru((mem) => {
 		const iter = exec(mem)
 		return iter.next().value
