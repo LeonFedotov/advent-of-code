@@ -4,9 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "axel": "^0.0.3",
     "colors": "^1.4.0",
     "lodash": "^4.17.15",
     "mathjs": "^6.2.5",
+    "readline-sync": "^1.4.10",
     "table": "^5.4.6"
   }
 }
