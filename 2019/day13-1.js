@@ -39,7 +39,7 @@ const draw = (list) => _
 	})
 	.value()
 
-const game = function(input, player = (ball, paddle) => 0) {
+const breakout = function(input, player = (ball, paddle) => 0) {
 	const cpu = exec(input)
 	ctx.clear()
 	let next = cpu.next()
@@ -51,6 +51,7 @@ const game = function(input, player = (ball, paddle) => 0) {
 				c == 4 && (ball = x)
 				c == 3 && (paddle = x)
 			})
+
 		ctx.cursor.restore()
 		next = cpu.next(player(ball, paddle))
 		ctx.cursor.reset()
@@ -60,5 +61,6 @@ const game = function(input, player = (ball, paddle) => 0) {
 }
 const aiPlayer = (ball, paddle) => ball == paddle ? 0 : ball > paddle ? 1 : -1
 const human = (ball, paddle) => Number(rl.keyIn('', {hideEchoBack: true, mask: '', limit: '$<4-6>'}))-5
-game(input, aiPlayer)
+
+breakout(input, aiPlayer)
 
