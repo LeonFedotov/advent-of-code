@@ -64,5 +64,5 @@ const breakout = function(input, player = (ball, paddle) => 0) {
 const aiPlayer = (ball, paddle) => ball == paddle ? 0 : ball > paddle ? 1 : -1
 const humanPlayer = (ball, paddle) => Number(keyIn())-5
 
-breakout(input, humanPlayer)
+breakout(input, aiPlayer)
 
