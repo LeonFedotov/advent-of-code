@@ -77,21 +77,18 @@ const map = _
 	.value()
 
 const getNeeded = (k, amount, leftovers) => {
-	const needed = []
-	let {batch_size, ingr} = map[k]
-
-	leftovers[k] = leftovers[k]|| 0
+	let { batch_size, ingr } = map[k]
 	const need = Math.ceil(amount/Number(batch_size))
-	leftovers[k] += need*Number(batch_size)-amount
-	for(let [c, t] of ingr) {
+	leftovers[k] = (leftovers[k]|| 0) + need*Number(batch_size) - amount
+	return ingr.map(([c, t]) => {
 		let total = Number(c)*need
-		leftovers[t] = leftovers[t] || 0
-		const leftover = Math.min(total, leftovers[t])
-		total -= leftover
-		leftovers[t] -= leftover
-		needed.push([t, total])
-	}
-	return needed
+		if(leftovers[t]) {
+			const leftover = Math.min(total, leftovers[t])
+			total -= leftover
+			leftovers[t] -= leftover
+		}
+		return [t, total]
+	})
 }
 
 const getOre = (n = 1) => {

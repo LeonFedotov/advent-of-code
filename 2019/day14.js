@@ -76,25 +76,21 @@ const map = _
 	.reduce((m, [ingr, [[batch_size, name]]]) => ({...m, [name]: { batch_size, ingr, name }}), {})
 	.value()
 
-const ORE = 'ORE'
-const isBase = (n) => map[n].ingr.length == 1 && map[n].ingr[0][1] == ORE
-
-
-const reduce = (k, amount, leftovers) => {
-	const needed = []
+const getNeeded = (k, amount, leftovers) => {
 	let {batch_size, ingr} = map[k]
-	leftovers[k] = leftovers[k]|| 0
 	const need = Math.ceil(amount/Number(batch_size))
-	leftovers[k] += need*Number(batch_size)-amount
-	for(let [c, t] of ingr) {
+	leftovers[k] = (leftovers[k]|| 0) + need*Number(batch_size)-amount
+	return ingr.map(([c, t]) => {
 		let total = Number(c)*need
-		leftovers[t] = leftovers[t] || 0
-		const leftover = Math.min(total, leftovers[t])
-		total -= leftover
-		leftovers[t] -= leftover
-		needed.push([t, total])
-	}
-	return needed
+
+		if(leftovers[t]) {
+			const leftover = Math.min(total, leftovers[t])
+			total -= leftover
+			leftovers[t] -= leftover
+		}
+
+		return [t, total]
+	})
 }
 
 const getOre = (n = 1) => {
@@ -103,7 +99,7 @@ const getOre = (n = 1) => {
 	let ore = 0
 	while(needed.length) {
 		let [name, amount] = needed.pop()
-		reduce(name, amount, leftovers)
+		getNeeded(name, amount, leftovers)
 			.forEach(([name, total]) => {
 				if(name == 'ORE') {
 					ore += total
