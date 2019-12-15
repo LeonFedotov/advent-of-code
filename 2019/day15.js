@@ -50,23 +50,27 @@ const move = (dir, pos = [0, 0]) => {
 	} else if (dir == 2) {
 		pos[1] += 1
 	} else if(dir == 3) {
-		pos[0] += 1
-	} else if(dir == 4) {
 		pos[0] -= 1
+	} else if(dir == 4) {
+		pos[0] += 1
 	}
 
 	return pos
 }
+// north (1) -> (4)
+// south (2) -> (3)
+// west (3) -> (1)
+// east (4) -> (2)
 while(res!=2) {
-	dir = direction[Number(keyIn())]
 	putPixel(...pos.concat([colors.robot]))
 	res = cpu.next(dir).value[0]
 	ctx.text(50, 3, `res: ${JSON.stringify({res, dir})}`)
 	if(res == 0) {
 		putPixel(...move(dir, pos).concat([colors.wall]))
-		dir = dir%4 + 1
+		dir = _.random(1, 4)
 	} else if(res == 1) {
 		putPixel(...pos.concat([colors.floor]))
+		ctx.text(pos[0], pos[1], '.')
 		pos = move(dir, pos)
 	}
 
@@ -76,3 +80,30 @@ while(res!=2) {
 }
 ctx.cursor.restore()
 ctx.cursor.reset()
+
+/*
+       ...........
+       .         .
+   ... ... ..... .
+   . .   . .   . . S
+   . ..... . ..... .
+   .       . .     .
+   ... ... . . .....
+     .   . .   .
+     ..... .....       ...
+         .             . .
+         ...........   . .
+                   .   . .
+     ............. . ... .....
+     .           . . .       .
+ ..... ...       . ... ..... ...
+ .     . .       .     . .     .
+ .  O... .     ...     . .......
+ .       .     . .     .
+ ......... ..... .     ...
+         . .     .       .
+         . . ..... ..... .
+           .       .   . .
+           ........... ...
+
+*/
