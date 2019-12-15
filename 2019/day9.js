@@ -64,12 +64,12 @@ const exec = function * (input) {
 			const x = valueWithMode(xm, p++)
 			const y = valueWithMode(ym, p++)
 			const t = tm == 2 ? relp+mem[p++]:mem[p++]
-			mem[t] = x<y
+			mem[t] = x<y?1:0
 		} else if(op == EQ) {
 			const x = valueWithMode(xm, p++)
 			const y = valueWithMode(ym, p++)
 			const t = tm == 2 ? relp+mem[p++]:mem[p++]
-			mem[t] = x==y
+			mem[t] = x==y?1:0
 		}
 	}
 	return res
