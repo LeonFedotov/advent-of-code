@@ -22,8 +22,8 @@ const ranges = _
   })
   .value()
 
-async function runWorker(workerData) {
-  console.log('running worker', workerData)
+async function runWorker(workerData, index) {
+  console.log('running worker', index, workerData)
   return new Promise((resolve, reject) => {
     const worker = new Worker('./part2-worker.js', {
       workerData: {
@@ -31,10 +31,11 @@ async function runWorker(workerData) {
         inputFile
       }
     })
-
-    worker.on('message', resolve)
+    let result;
+    worker.on('message', (r) => resolve(result = r))
     worker.on('error', reject)
     worker.on('exit', (code) => {
+      console.log('finished worker', index, result)
       if (code !== 0) {
         reject(new Error(`Worker stopped with exit code ${code}`))
       }
@@ -44,7 +45,7 @@ async function runWorker(workerData) {
 
 async function main() {
   try {
-    const results = await Promise.all(ranges.map(ranges => runWorker(ranges)))
+    const results = await Promise.all(ranges.map(runWorker))
     console.log(_.min(results.flat()))
   } catch (err) {
     console.error('Error:', err)

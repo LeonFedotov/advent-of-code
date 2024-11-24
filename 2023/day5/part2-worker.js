@@ -4,14 +4,14 @@ const _ = require('lodash')
 const { readFileSync } = require('fs')
 
 const getMappingFunction = (string) => {
-  const rawKeys = string.split(' map:').map(s => s.trim()).pop()
-  keys = rawKeys
+  let [, keys] = string.split(' map:').map(s => s.trim())
+  keys = keys
     .split('\n')
     .map(s => s.trim().split(' ').map(Number))
     .map(([target, source, len]) => ({ source, target, len }))
 
   return (seed) => {
-    const {source, target} = keys.find(({ source, len }) => source <= seed && seed <= source+len-1) || { source: seed, target: seed, len: 1}
+    const {source, target} = keys.find(({ source, len }) => source <= seed && seed < source+len) || { source: seed, target: seed }
     return target + (seed - source)
   }
 }
