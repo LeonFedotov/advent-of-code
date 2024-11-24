@@ -3,8 +3,6 @@ const { Worker } = require('worker_threads')
 const { readFileSync } = require('fs')
 const os = require('os')
 
-const log = (v) => console.dir(v, { depth: null })
-
 const numCPUs = os.cpus().length*2
 const inputFile = './input'
 const ranges = _
