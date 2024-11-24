@@ -5,7 +5,7 @@ const { readFileSync } = require('fs')
 
 const log = (v) => console.dir(v, { depth: null })
 
-const getMappingFunction = (string) => { 
+const getMappingFunction = (string) => {
   let [fromto, keys] = string.split(' map:').map(s => s.trim())
   fromto = fromto.split('-to-')
   keys = keys
@@ -13,11 +13,11 @@ const getMappingFunction = (string) => {
     .map(s => s.trim().split(' ').map(Number))
     .map(([target, source, len]) => ({ source, target, len }))
 
-  return (seed) => {    
-    const {source, target} = keys.find(({ source, len }) => source <= seed && seed <= source+len) || { source: seed, target: seed, len: 1}
+  return (seed) => {
+    const {source, target} = keys.find(({ source, len }) => source <= seed && seed <= source+len-1) || { source: seed, target: seed, len: 1}
     return target + (seed - source)
   }
-    
+
 }
 
 const seedToLocation = _

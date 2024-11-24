@@ -6,7 +6,7 @@ const os = require('os')
 const log = (v) => console.dir(v, { depth: null })
 
 const numCPUs = os.cpus().length
-const inputFile = './input-short'
+const inputFile = './input'
 const ranges = _
   .chain(readFileSync(inputFile))
   .trim()
