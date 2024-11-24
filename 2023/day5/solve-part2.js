@@ -5,7 +5,7 @@ const os = require('os')
 
 const log = (v) => console.dir(v, { depth: null })
 
-const numCPUs = os.cpus().length
+const numCPUs = os.cpus().length*2
 const inputFile = './input'
 const ranges = _
   .chain(readFileSync(inputFile))
@@ -34,7 +34,7 @@ async function runWorker(workerData) {
       }
     })
 
-    worker.on('message', (r) => { console.log(r), resolve(r) })
+    worker.on('message', resolve)
     worker.on('error', reject)
     worker.on('exit', (code) => {
       if (code !== 0) {
@@ -47,7 +47,6 @@ async function runWorker(workerData) {
 async function main() {
   try {
     const results = await Promise.all(ranges.map(ranges => runWorker(ranges)))
-    console.log(results)
     console.log(_.min(results.flat()))
   } catch (err) {
     console.error('Error:', err)
