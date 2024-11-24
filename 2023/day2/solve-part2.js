@@ -22,7 +22,21 @@ _
       }), {})
     )
   ])
-  .filter(([, sets]) => _.every(sets, (value) => _.every(value, (count, color) => count <= limits[color])))
-  .sumBy(([game]) => game)
+  .map(([game, sets]) => [game, _
+    .chain(sets)
+    .reduce((res, { red = 0, green = 0, blue = 0 }) => ({
+      ...res,
+      red: res.red > red ? res.red : red,
+      green: res.green > green ? res.green : green,
+      blue: res.blue > blue ? res.blue : blue,
+    }), { red: 0, green: 0, blue: 0 })
+    .filter((value => value))
+    .reduce((res, v) => res * v)
+    .value()
+  ])
+
+  .tap(console.dir)
+  .sumBy(([, powers]) => powers)
   .tap(console.log)
   .value()
+
