@@ -8,9 +8,9 @@ _
   .trim()
   .split('\n')
   .map(report => report.split(' ').map(Number))
-  .filter((levels) => 
-    levels.every((level, index) => index == 0 || level > levels[index-1] && level <= levels[index-1]+3) || 
-    levels.every((level, index) => index == 0 || level < levels[index-1] && level >= levels[index-1]-3)
+  .filter((levels) =>
+    levels.slice(1).every((level, index) => level > levels[index] && level <= levels[index]+3) ||
+    levels.slice(1).every((level, index) => level < levels[index] && level >= levels[index]-3)
   )
   .size()
   .tap(log)

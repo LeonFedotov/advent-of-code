@@ -10,8 +10,8 @@ _
   .map(report => report.split(' ').map(Number))
   .map(report => [report, ...report.map((level, index) => report.filter((l, i) => i !== index))])
   .filter((mlevels) => mlevels.some((levels) =>
-      levels.every((level, index) => index == 0 || level > levels[index-1] && level <= levels[index-1]+3) || 
-      levels.every((level, index) => index == 0 || level < levels[index-1] && level >= levels[index-1]-3)
+      levels.slice(1).every((level, index) => level > levels[index] && level <= levels[index]+3) ||
+      levels.slice(1).every((level, index) => level < levels[index] && level >= levels[index]-3)
     )
   )
   .size()
