@@ -1,45 +1,32 @@
 const _ = require('lodash')
 const { readFileSync } = require('fs')
 
-const digitMap = [
-  1,
-  'one',
-  'two',
-  'three',
-  'four',
-  'five',
-  'six',
-  'seven',
-  'eight',
-  'nine',
-  2,3,4,5,6,7,8,9
-]
-
-const regex = /(\d|oneight|twone|threeight|eightwo|eightwone|eighthree|sevenine|one|two|three|four|five|six|seven|eight|nine)/g
-
+const options = {
+  twone: '21',
+  threeight: '38',
+  eightwo: '82',
+  eightwone: '821',
+  eighthree: '83',
+  sevenine: '79',
+  oneight: '18',
+  one: '1',
+  two: '2',
+  three: '3',
+  four: '4',
+  five: '5',
+  six: '6',
+  seven: '7',
+  eight: '8',
+  nine: '9'
+};
 _
   .chain(readFileSync('./input'))
   .trim()
   .split('\n')
   .map(line => line
-    .replaceAll(regex, (match) => 
-      match == 'twone' ? '21' : 
-      match == 'threeight' ? '38' : 
-      match == 'eightwo' ? '82' : 
-      match == 'eightwone' ? '821' :
-      match == 'eighthree' ? '83' : 
-      match == 'sevenine' ? '79' :
-      match == 'oneight' ? '18' : 
-      match == 'one' ? '1' :
-      match == 'two' ? '2' :
-      match == 'three' ? '3' :
-      match == 'four' ? '4' :
-      match == 'five' ? '5' :
-      match == 'six' ? '6' :
-      match == 'seven' ? '7' :
-      match == 'eight' ? '8' :
-      match == 'nine' ? '9' :
-      match
+    .replaceAll(
+      new RegExp(`(\\d|${_.values(options).join('|')})`, 'g'),
+      (match) => options[match] || match
     )
     .split('')
     .filter(l => l.search(/\d/) !== -1)

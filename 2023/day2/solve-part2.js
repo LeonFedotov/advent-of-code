@@ -1,12 +1,6 @@
 const _ = require('lodash')
 const { readFileSync } = require('fs')
 
-const limits = {
-  red: 12,
-  green: 13,
-  blue: 14
-}
-
 _
   .chain(readFileSync('./input'))
   .trim()
@@ -34,7 +28,6 @@ _
     .reduce((res, v) => res * v)
     .value()
   ])
-
   .tap(console.dir)
   .sumBy(([, powers]) => powers)
   .tap(console.log)

@@ -9,7 +9,6 @@ const allCards = _
   .map(line => line.split(':'))
   .map(([, numbers]) => numbers.split(' | ').map(n => n.trim().split(' ').filter(a => a).map(a=>+a)))
   .map(([winning, got], index) => [index, got.filter(number => winning.includes(number)).length])
-  // .filter(([,winning]) => winning)
   .tap(log)
   .value()
 
