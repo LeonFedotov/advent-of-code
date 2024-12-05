@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const { readFileSync } = require('fs')
-const { i } = require('mathjs/lib/entry/pureFunctionsAny.generated')
 
 const log = (v) => console.dir(v, { depth: null })
 
