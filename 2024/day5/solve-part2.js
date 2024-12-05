@@ -8,7 +8,7 @@ const isLegalUpdate = (rules, update) =>
     index == 0 || !rules[u] || rules[u].every((r) => !update.slice(0, index).includes(r)))
 
 _
-  .chain(readFileSync('./input'))
+  .chain(readFileSync('./input-short'))
   .trim()
   .split('\n\n')
   .thru(([rules, updates]) => [
@@ -17,13 +17,14 @@ _
       .map((rule) => rule.split('|').map(Number))
       .reduce((rules, [key, value]) => ({
         ...rules,
-        ...(!rules[key] ? { [key]: [value] } : { [key]: [...rules[key], value]})
+        [key]: [...(rules[key] || []), value]
       }), {}),
     updates.split('\n').map((u) => u.split(',').map(Number))
   ])
   .thru(([rules, updates]) => [rules, updates.filter((update) => !isLegalUpdate(rules, update))])
-  .thru(([rules, updates]) => updates.map((update) => update.reduce((acc, u, index) => (
-    !rules[u] || !index ? [...acc, u] : acc.reduce(([acc, rest], current) => (
+  .thru(([rules, updates]) => updates.map((update) =>
+    update.reduce((acc, u, index) => (
+      !rules[u] || !index ? [...acc, u] : acc.reduce(([acc, rest], current) => (
         !rules[u].includes(current) ? [[...acc, current], rest] : [acc, [...rest, current]]
       ), [[], [u]])
       .flat()

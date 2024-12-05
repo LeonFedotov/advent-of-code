@@ -17,7 +17,7 @@ _
       .map((rule) => rule.split('|').map(Number))
       .reduce((rules, [key, value]) => ({
         ...rules,
-        ...(!rules[key] ? { [key]: [value] } : { [key]: [...rules[key], value]})
+        [key]: [...(rules[key] || []), value]
       }), {}),
     updates.split('\n').map((u) => u.split(',').map(Number))
   ])
